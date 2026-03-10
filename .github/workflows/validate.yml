@@ -1,0 +1,42 @@
+name: Validate OpenTofu Examples
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        working_directory:
+          - examples/01-pin-everything
+          - examples/02-module-versioning
+          - examples/03-ci-upgrade-check
+
+    defaults:
+      run:
+        working-directory: ${{ matrix.working_directory }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: latest
+
+      - name: Init with upgrade
+        run: tofu init -upgrade
+
+      - name: Format check
+        run: tofu fmt -check
+
+      - name: Validate
+        run: tofu validate
+
+      - name: Plan
+        run: tofu plan -out=tfplan
