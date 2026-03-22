@@ -29,6 +29,7 @@ The examples are designed to be simple and local-friendly. They use the `random`
 ## What this repo demonstrates
 
 ### 1) Pin everything
+
 See [`examples/01-pin-everything`](./examples/01-pin-everything).
 
 It pins:
@@ -38,6 +39,7 @@ It pins:
 This protects your CI pipeline from unexpected dependency changes.
 
 ### 2) Treat modules like APIs
+
 See [`examples/02-module-versioning`](./examples/02-module-versioning).
 
 The module in [`modules/app-config`](./modules/app-config) is local in this demo, but the README shows how you would consume it from a tagged Git source in a real repository.
@@ -48,6 +50,7 @@ Suggested semantic versioning policy:
 - **PATCH**: bug fixes and documentation improvements
 
 ### 3) Automate upgrades
+
 See [`examples/03-ci-upgrade-check`](./examples/03-ci-upgrade-check), the helper script in [`scripts/upgrade-check.sh`](./scripts/upgrade-check.sh), and the GitHub Actions workflow in [`.github/workflows/validate.yml`](./.github/workflows/validate.yml).
 
 The workflow runs:
@@ -58,11 +61,19 @@ The workflow runs:
 
 This is the practical pattern behind the talk message: **find upgrade issues in CI, not in production**.
 
-## Quick start
+## Quick Start
+
+```bash
+git clone https://github.com/xiloss/opentofu-upgrade-patterns
+cd opentofu-upgrade-patterns/examples/01-pin-everything
+tofu init
+tofu plan
+```
 
 ### Prerequisites
 
 Install one of the following:
+
 - **OpenTofu**
 - **Terraform**
 
@@ -86,15 +97,13 @@ cd examples/03-ci-upgrade-check
 ../../scripts/upgrade-check.sh
 ```
 
-## Real-world follow-up after the talk
+## Try breaking it
 
-If you want to extend this repo for production use, the next steps are:
+Change a version constraint and run:
 
-1. Publish reusable modules in their own repositories.
-2. Tag releases using semantic versioning.
-3. Add policy checks, security scanning, and provider lock files.
-4. Test upgrades with pull requests created by bots such as Renovate or Dependabot.
-5. Promote changes through dev, staging, and production with the same pinned versions.
+```bash
+tofu init -upgrade
+```
 
 ## Example of a versioned Git module source
 
@@ -109,15 +118,29 @@ module "app_config" {
 }
 ```
 
-That `ref` is the important point for the talk: **modules should be consumed like versioned APIs, not as floating code**.
+## Why this repository exists
 
-## Suggested talk QR usage
+This repository is the companion to the talk:
 
-Point your QR code to this repo so people can leave with:
-- one minimal example they can run immediately
-- one module versioning pattern they can copy
-- one CI workflow they can adapt the same day
+**"Staying in Sync: Managing Upgrades in OpenTofu and Terraform Modules"**
 
-## License
+It demonstrates three core principles:
 
-MIT
+1. Pin versions for reproducibility
+2. Treat modules as versioned APIs
+3. Automate upgrades with CI
+
+The goal is to help teams avoid breaking infrastructure during upgrades.
+
+## Scope
+
+This repository focuses on upgrade patterns.
+
+It does NOT cover:
+
+- remote state backends
+- multi-environment promotion
+- cloud authentication
+- production security patterns
+
+Those are intentionally excluded to keep the examples simple and runnable locally.
